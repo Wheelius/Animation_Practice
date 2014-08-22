@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Animation Practice</title>
+		<style>
+			body {
+				height:100vh;
+				width:100vw;
+			}
+			.centered {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				width:50px;
+				height:50px;
+				margin-top: -25px;
+				margin-left: -25px;
+			}
+			.dot{
+				position:fixed;
+				width:20px;
+				height:20px;
+				margin:-10px 0 0 -10px;
+				pointer-events:none;
+			}
+			.animate{
+				transform:translate3d(0,0,0);
+				transition:all .25s ease;
+				-webkit-transition:all .25s ease;
+				-moz-transition:all .25s ease;
+			}
+			.FASTanimate{
+				transform:translate3d(0,0,0);
+				transition:all .5s ease;
+				-webkit-transition:all .5s ease;
+				-moz-transition:all .5s ease;
+			}
+			#messages{
+				width:200px;
+				height:20px;
+				position:relative;
+				top:100%;
+				left:100%;
+				margin-top: -50px;
+				margin-left: -200px; 
+				background-color:rgba(0,0,0,0);
+			}
+		</style>
+
+	</head>
+  	<body id="window">
+  		<div id="messages"><div id="Randos"></div><div id="Centers"></div></div>
+		<div id="container" class="centered animate" width="50" height='50' style="border-radius:25px">
+			<svg width="50" height="50">
+				<circle id="PlayerObject" style="pointer-events:none" cx="50%" cy="50%" r="20" stroke="#83AF9B" stroke-width="2" fill="#C5CFC6"></circle>
+		  	</svg>
+		</div>
+		<script>
+			var container = document.getElementById('container');
+			container.style.top = 50+'%';
+			container.style.left = 50+'%';
+			var WindowSpace = document.getElementById('window');
+			var svgns = "http://www.w3.org/2000/svg";
+			var ConfetteRemoved = true, doConfetti = false;
+			var colorCrap = "", centerCounter = 0, randomCounter = 0;
+			
+			
+			var blast = function(){
+				cycleColors();
+				var randomCrap = document.createElement("div");
+				randomCrap.className = "dot FASTanimate";
+				randomCrap.style.top = container.style.top;
+				randomCrap.style.left = container.style.left;
+				randomCrap.style.opacity = 1;
+
+
+				randomCrap.innerHTML = '<svg width="20" height="20"><circle id="randomshit"style="pointer-events:none" cx="50%" cy="50%" r="10" stroke="#83AF9B" stroke-width="1" fill="'+colorCrap+'"></circle></svg>';
+				WindowSpace.appendChild(randomCrap);
+
+				setTimeout(function(){
+					randomCrap.style.top = (Math.round((Math.random() * 7))*10 + 10)+'%';
+					randomCrap.style.left = (Math.round((Math.random() * 7))*10 + 10)+'%';
+
+					setTimeout(function(){
+						randomCrap.style.opacity = 0;
+					},250)
+
+					setTimeout(function(){
+						randomCrap.parentNode.removeChild(randomCrap);
+					},500)
+				},10)
+			}
+
+			WindowSpace.onclick = function RandomMove(){
+				container.style.top = (Math.round((Math.random() * 7))*10 + 10)+'%';
+				container.style.left = (Math.round((Math.random() * 7))*10 + 10)+'%';
+				++randomCounter;
+				document.getElementById('Randos').innerHTML = "Randomized "+randomCounter+" Time(s)";
+				
+			}
+			container.onclick = function Return(event){
+				if(container.style.top != 50+'%' && container.style.left != 50+'%'){
+					clearInterval(doConfetti);
+				}
+				container.style.top = 50+'%';
+				container.style.left = 50+'%';
+				container.style.marginLeft = -25;
+				container.style.marginTop = -25;
+				WindowSpace.style.backgroundColor = "";
+				event.stopPropagation();
+				++centerCounter;
+				document.getElementById('Centers').innerHTML = "Centered "+centerCounter+" Time(s)";
+			}
+			function Messages(){
+
+			}
+			function cycleColors(){
+				var colorCrap_hue, colorCrap_sat;
+				colorCrap_hue = Math.round((Math.random()*10)*360);
+				colorCrap_sat = Math.round((Math.random()*10)*10);
+				colorCrap = "hsl("+colorCrap_hue+", "+colorCrap_sat+"%, 50%)";
+				
+			}
+
+			container.onmouseover = function Stuff() {
+
+				doConfetti = setInterval( blast , 250 );
+
+			}
+			container.onmouseout = function RemoveStuff(){
+				clearInterval( doConfetti );	
+			}
+			
+			
+			var functions ={
+				controls:function(e){
+					if( e.which ){
+						if( e.which == 39 ){
+							// move right
+							if((container.style.left.split("%")[0]*1) < 96){
+								
+								container.style.left = (container.style.left.split("%")[0]*1)+1+'%';
+							}
+						}
+						if( e.which == 37 ){
+							// move left
+							if((container.style.left.split("%")[0]*1) > 3){
+								
+								container.style.left = (container.style.left.split("%")[0]*1)-1+'%';
+							}
+						}
+						if( e.which == 38 ){
+							// move up
+							if((container.style.top.split("%")[0]*1) > 3){
+								
+								container.style.top = (container.style.top.split("%")[0]*1)-1+'%';
+							}
+						}
+						if( e.which == 40 ){
+							// move down
+							if((container.style.top.split("%")[0]*1) < 96){
+								
+								container.style.top = (container.style.top.split("%")[0]*1)+1+'%';
+							}
+						}
+						if( e.which == 32){
+							
+						}
+						
+					}
+				}
+			}
+			document.removeEventListener('keydown',functions.controls)
+			document.addEventListener('keydown',functions.controls,false)
+		</script>
+	</body>
+</html>
